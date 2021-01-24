@@ -77,7 +77,8 @@ export const VisualEditor = defineComponent({
           const value = dataModel.value.blocks || [];
           value.push({
             top: e.offsetY,
-            left: e.offsetX
+            left: e.offsetX,
+            componentKey: current!.key
           });
           dataModel.value = {
             ...dataModel.value,
@@ -114,7 +115,11 @@ export const VisualEditor = defineComponent({
             >
               {!!dataModel.value &&
                 dataModel.value.blocks.map((block, index) => (
-                  <VisualEditorBlock block={block} key={index} />
+                  <VisualEditorBlock
+                    config={props.config}
+                    block={block}
+                    key={index}
+                  />
                 ))}
             </div>
           </div>
