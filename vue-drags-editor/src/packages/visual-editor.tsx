@@ -4,7 +4,8 @@ import {
   VisualEditorModelValue,
   VisualEditorConfig,
   VisualEditorComponent,
-  createNewBlock
+  createNewBlock,
+  VisualEditorBlockData
 } from './visual-editor.utils';
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
@@ -92,8 +93,43 @@ export const VisualEditor = defineComponent({
       return blockHandler;
     })();
 
-    // const blockDraggier = (() => {})();
+    const methods = {
+      clearFocus: (block?: VisualEditorBlockData) => {
+        let blocks = dataModel.value.blocks || [];
+        if (blocks.length == 0) return;
+        if (block) {
+          blocks = blocks.filter(item => item !== block);
+        }
+        blocks.forEach(block => (block.focus = false));
+      }
+    };
 
+    // const blockDraggier = (() => {})();
+    const focusHandler = (() => {
+      return {
+        container: {
+          onMousedown: (e: MouseEvent) => {
+            e.stopPropagation(); // 阻止冒泡
+            e.preventDefault();
+            (dataModel.value.blocks || []).forEach(
+              block => (block.focus = false)
+            );
+          }
+        },
+        block: {
+          onMousedown: (e: MouseEvent, block: VisualEditorBlockData) => {
+            e.stopPropagation(); // 阻止冒泡
+            e.preventDefault();
+            if (e.shiftKey) {
+              block.focus = !block.focus;
+            } else {
+              block.focus = true;
+              methods.clearFocus(block);
+            }
+          }
+        }
+      };
+    })();
     return () => (
       <div class="visual-editor">
         <div class="visual-editor-metu">
@@ -117,6 +153,7 @@ export const VisualEditor = defineComponent({
               ref={containerRef}
               class="visual-editor-container"
               style={containerStyles.value}
+              {...focusHandler.container}
             >
               {!!dataModel.value &&
                 dataModel.value.blocks.map((block, index) => (
@@ -124,6 +161,10 @@ export const VisualEditor = defineComponent({
                     config={props.config}
                     block={block}
                     key={index}
+                    {...{
+                      onMousedown: (e: MouseEvent) =>
+                        focusHandler.block.onMousedown(e, block)
+                    }}
                   />
                 ))}
             </div>

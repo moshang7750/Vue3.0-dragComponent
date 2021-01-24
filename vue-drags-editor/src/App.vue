@@ -25,6 +25,11 @@ export default defineComponent({
           },
           {
             left: 200,
+            top: 300,
+            componentKey: 'text'
+          },
+          {
+            left: 200,
             top: 200,
             componentKey: 'input'
           }
