@@ -3,7 +3,8 @@ import './visual-editor.scss';
 import {
   VisualEditorModelValue,
   VisualEditorConfig,
-  VisualEditorComponent
+  VisualEditorComponent,
+  createNewBlock
 } from './visual-editor.utils';
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
@@ -75,12 +76,13 @@ export const VisualEditor = defineComponent({
         drop: (e: DragEvent) => {
           // console.log('drop', current);
           const value = dataModel.value.blocks || [];
-          value.push({
-            top: e.offsetY,
-            left: e.offsetX,
-            componentKey: current!.key,
-            adjustPosition: true
-          });
+          value.push(
+            createNewBlock({
+              component: current!,
+              top: e.offsetY,
+              left: e.offsetX
+            })
+          );
           dataModel.value = {
             ...dataModel.value,
             blocks: value
@@ -89,6 +91,8 @@ export const VisualEditor = defineComponent({
       };
       return blockHandler;
     })();
+
+    // const blockDraggier = (() => {})();
 
     return () => (
       <div class="visual-editor">

@@ -126,6 +126,22 @@ $primary: #409EFF;
 
                 &>.visual-editor-block {
                     position: absolute;
+
+                    &:after {
+                        $space: 3px;
+                        position: absolute;
+                        left: -$space;
+                        top: -$space;
+                        right: -$space;
+                        bottom: -$space;
+                        content: '';
+                    }
+
+                    &.visual-editor-block-focus {
+                        &:after {
+                            border: 1px dashed $primary;
+                        }
+                    }
                 }
             }
         }
