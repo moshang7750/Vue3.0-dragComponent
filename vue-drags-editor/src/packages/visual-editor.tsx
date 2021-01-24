@@ -9,6 +9,7 @@ import {
 } from './visual-editor.utils';
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
+import { useVisualCommand } from './utils/visual.command';
 export const VisualEditor = defineComponent({
   props: {
     modelValue: {
@@ -188,6 +189,90 @@ export const VisualEditor = defineComponent({
       };
     })();
 
+    const commander = useVisualCommand();
+    /*操作栏按钮*/
+    const buttons = [
+      {
+        label: '撤销',
+        icon: 'icon-back',
+        handler: commander.undo,
+        tip: 'ctrl+z'
+      },
+      {
+        label: '重做',
+        icon: 'icon-forward',
+        handler: commander.redo,
+        tip: 'ctrl+y, ctrl+shift+z'
+      },
+      {
+        label: '删除',
+        icon: 'icon-delete',
+        handler: () => commander.delete,
+        tip: 'ctrl+d, backspace, delete'
+      }
+      // {
+      //   label: () => (previewModel.value ? '编辑' : '预览'),
+      //   icon: () => (previewModel.value ? 'icon-edit' : 'icon-browse'),
+      //   handler: () => {
+      //     if (!previewModel.value) {
+      //       methods.clearFocus();
+      //     }
+      //     previewModel.value = !previewModel.value;
+      //   }
+      // },
+      // {
+      //   label: '导入',
+      //   icon: 'icon-import',
+      //   handler: async () => {
+      //     const text = await $dialog.textarea('', {
+      //       title: '请输入导入的JSON数据'
+      //     });
+      //     if (!text) {
+      //       return;
+      //     }
+      //     try {
+      //       const data = JSON.parse(text);
+      //       commander.updateModelValue(data);
+      //     } catch (e) {
+      //       ElNotification({
+      //         title: '导入失败！',
+      //         message: '导入的数据格式不正常，请检查！'
+      //       });
+      //     }
+      //   }
+      // },
+      // {
+      //   label: '导出',
+      //   icon: 'icon-export',
+      //   handler: () =>
+      //     $dialog.textarea(JSON.stringify(dataModel.value), {
+      //       title: '导出的JSON数据',
+      //       editReadonly: true
+      //     })
+      // },
+      // {
+      //   label: '置顶',
+      //   icon: 'icon-place-top',
+      //   handler: () => commander.placeTop(),
+      //   tip: 'ctrl+up'
+      // },
+      // {
+      //   label: '置底',
+      //   icon: 'icon-place-bottom',
+      //   handler: () => commander.placeBottom(),
+      //   tip: 'ctrl+down'
+      // },
+
+      // { label: '清空', icon: 'icon-reset', handler: () => commander.clear() },
+      // {
+      //   label: '关闭',
+      //   icon: 'icon-close',
+      //   handler: () => {
+      //     methods.clearFocus();
+      //     state.editFlag = false;
+      //   }
+      // }
+    ];
     return () => (
       <div class="visual-editor">
         <div class="visual-editor-metu">
@@ -203,7 +288,14 @@ export const VisualEditor = defineComponent({
             </div>
           ))}
         </div>
-        <div class="visual-editor-head">visual-editor-head</div>
+        <div class="visual-editor-head">
+          {buttons.map((btn, index) => (
+            <div key={index} class="visual-editor-head-button">
+              <i class={`iconfont ${btn.icon}`}></i>
+              <span>{btn.label}</span>
+            </div>
+          ))}
+        </div>
         <div class="visual-editor-operator">visual-editor-operato</div>
         <div class="visual-editor-body">
           <div class="visual-editor-content">
