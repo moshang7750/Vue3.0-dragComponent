@@ -1,7 +1,9 @@
 export interface VisualEditorBlockData {
     top: number,
     left: number,
-    componentKey: string
+    componentKey: string,           //  组件的唯一标识
+    adjustPosition: boolean
+
 }
 export interface VisualEditorModelValue {
     container: {
