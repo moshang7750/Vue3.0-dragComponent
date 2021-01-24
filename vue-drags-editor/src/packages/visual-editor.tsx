@@ -31,49 +31,63 @@ export const VisualEditor = defineComponent({
       width: `${dataModel.value.container.width}px`,
       height: `${dataModel.value.container.height}px`
     }));
-
     // 拖拽事件
-    const handle = {
-      current: {
-        component: null as null | VisualEditorComponent
-      },
-      dragstart: (e: DragEvent, component: VisualEditorComponent) => {
-        containerRef.value.addEventListener('dragenter', handle.dragenter);
-        containerRef.value.addEventListener('dragover', handle.dragover);
-        containerRef.value.addEventListener('dragleave', handle.dragleave);
-        containerRef.value.addEventListener('drop', handle.drop);
-        handle.current.component = component;
-      },
-      dragenter: (e: DragEvent) => {
-        e.dataTransfer!.dropEffect = 'move';
-      },
-      dragover: (e: DragEvent) => {
-        e.preventDefault();
-      },
-      dragleave: (e: DragEvent) => {
-        e.dataTransfer!.dropEffect = 'none';
-      },
-      dragend: (e: DragEvent) => {
-        handle.current.component = null;
-        containerRef.value.removeEventListener('dragenter', handle.dragenter);
-        containerRef.value.removeEventListener('dragover', handle.dragover);
-        containerRef.value.removeEventListener('dragleave', handle.dragleave);
-        containerRef.value.removeEventListener('drop', handle.drop);
-      },
-      drop: (e: DragEvent) => {
-        console.log('drop', handle.current.component);
-        ``;
-        const value = dataModel.value.blocks || [];
-        value.push({
-          top: e.offsetY,
-          left: e.offsetX
-        });
-        dataModel.value = {
-          ...dataModel.value,
-          blocks: value
-        };
-      }
-    };
+    const mutuDraggier = (() => {
+      let current = null as null | VisualEditorComponent;
+      const blockHandler = {
+        dragstart: (e: DragEvent, component: VisualEditorComponent) => {
+          containerRef.value.addEventListener(
+            'dragenter',
+            containerHandler.dragenter
+          );
+          containerRef.value.addEventListener(
+            'dragover',
+            containerHandler.dragover
+          );
+          containerRef.value.addEventListener(
+            'dragleave',
+            containerHandler.dragleave
+          );
+          containerRef.value.addEventListener('drop', containerHandler.drop);
+          current = component;
+        },
+        dragend: (e: DragEvent) => {
+          containerRef.value.removeEventListener(
+            'dragenter',
+            containerHandler.dragenter
+          );
+          containerRef.value.removeEventListener(
+            'dragover',
+            containerHandler.dragover
+          );
+          containerRef.value.removeEventListener(
+            'dragleave',
+            containerHandler.dragleave
+          );
+          containerRef.value.removeEventListener('drop', containerHandler.drop);
+          current = null;
+        }
+      };
+      const containerHandler = {
+        dragenter: (e: DragEvent) => (e.dataTransfer!.dropEffect = 'move'),
+        dragover: (e: DragEvent) => e.preventDefault(),
+        dragleave: (e: DragEvent) => (e.dataTransfer!.dropEffect = 'none'),
+        drop: (e: DragEvent) => {
+          // console.log('drop', current);
+          const value = dataModel.value.blocks || [];
+          value.push({
+            top: e.offsetY,
+            left: e.offsetX
+          });
+          dataModel.value = {
+            ...dataModel.value,
+            blocks: value
+          };
+        }
+      };
+      return blockHandler;
+    })();
+
     return () => (
       <div class="visual-editor">
         <div class="visual-editor-metu">
@@ -81,8 +95,8 @@ export const VisualEditor = defineComponent({
             <div
               class="visual-editor-metu-item"
               draggable
-              onDragstart={e => handle.dragstart(e, comp)}
-              onDragend={handle.dragend}
+              onDragstart={e => mutuDraggier.dragstart(e, comp)}
+              onDragend={mutuDraggier.dragend}
             >
               <span class="visual-editor-metu-label">{comp.label}</span>
               {comp.preview()}
@@ -97,7 +111,6 @@ export const VisualEditor = defineComponent({
               ref={containerRef}
               class="visual-editor-container"
               style={containerStyles.value}
-              onDrop={handle.drop}
             >
               {!!dataModel.value &&
                 dataModel.value.blocks.map((block, index) => (
