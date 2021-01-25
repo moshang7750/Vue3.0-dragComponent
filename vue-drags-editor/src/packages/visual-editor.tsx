@@ -38,8 +38,7 @@ export const VisualEditor = defineComponent({
     const focusData = computed(() => {
       let focus: VisualEditorBlockData[] = [];
       let unfocus: VisualEditorBlockData[] = [];
-      let blocks = dataModel.value.blocks || [];
-      blocks.forEach((block: VisualEditorBlockData) => {
+      dataModel.value.blocks.forEach(block => {
         (block.focus ? focus : unfocus).push(block);
       });
       return {
@@ -90,19 +89,20 @@ export const VisualEditor = defineComponent({
         dragover: (e: DragEvent) => e.preventDefault(),
         dragleave: (e: DragEvent) => (e.dataTransfer!.dropEffect = 'none'),
         drop: (e: DragEvent) => {
-          // console.log('drop', current);
-          const value = dataModel.value.blocks || [];
-          value.push(
+          const blocks = [...(dataModel.value.blocks || [])];
+          blocks.push(
             createNewBlock({
               component: current!,
               top: e.offsetY,
               left: e.offsetX
             })
           );
-          dataModel.value = {
-            ...dataModel.value,
-            blocks: value
-          };
+          // 更新最新的组件数据
+          methods.updateBlocks(blocks);
+          // dataModel.value = {
+          //   ...dataModel.value,
+          //   blocks: blocks
+          // };
         }
       };
       return blockHandler;
@@ -116,6 +116,12 @@ export const VisualEditor = defineComponent({
           blocks = blocks.filter(item => item !== block);
         }
         blocks.forEach(block => (block.focus = false));
+      },
+      updateBlocks: (blocks: VisualEditorBlockData[]) => {
+        dataModel.value = {
+          ...dataModel.value,
+          blocks
+        };
       }
     };
     const blockDraggier = (() => {
@@ -189,7 +195,7 @@ export const VisualEditor = defineComponent({
       };
     })();
 
-    const commander = useVisualCommand();
+    const commander = useVisualCommand({ focusData, methods, dataModel });
     /*操作栏按钮*/
     const buttons = [
       {
@@ -207,71 +213,9 @@ export const VisualEditor = defineComponent({
       {
         label: '删除',
         icon: 'icon-delete',
-        handler: () => commander.delete,
+        handler: () => commander.delete(),
         tip: 'ctrl+d, backspace, delete'
       }
-      // {
-      //   label: () => (previewModel.value ? '编辑' : '预览'),
-      //   icon: () => (previewModel.value ? 'icon-edit' : 'icon-browse'),
-      //   handler: () => {
-      //     if (!previewModel.value) {
-      //       methods.clearFocus();
-      //     }
-      //     previewModel.value = !previewModel.value;
-      //   }
-      // },
-      // {
-      //   label: '导入',
-      //   icon: 'icon-import',
-      //   handler: async () => {
-      //     const text = await $dialog.textarea('', {
-      //       title: '请输入导入的JSON数据'
-      //     });
-      //     if (!text) {
-      //       return;
-      //     }
-      //     try {
-      //       const data = JSON.parse(text);
-      //       commander.updateModelValue(data);
-      //     } catch (e) {
-      //       ElNotification({
-      //         title: '导入失败！',
-      //         message: '导入的数据格式不正常，请检查！'
-      //       });
-      //     }
-      //   }
-      // },
-      // {
-      //   label: '导出',
-      //   icon: 'icon-export',
-      //   handler: () =>
-      //     $dialog.textarea(JSON.stringify(dataModel.value), {
-      //       title: '导出的JSON数据',
-      //       editReadonly: true
-      //     })
-      // },
-      // {
-      //   label: '置顶',
-      //   icon: 'icon-place-top',
-      //   handler: () => commander.placeTop(),
-      //   tip: 'ctrl+up'
-      // },
-      // {
-      //   label: '置底',
-      //   icon: 'icon-place-bottom',
-      //   handler: () => commander.placeBottom(),
-      //   tip: 'ctrl+down'
-      // },
-
-      // { label: '清空', icon: 'icon-reset', handler: () => commander.clear() },
-      // {
-      //   label: '关闭',
-      //   icon: 'icon-close',
-      //   handler: () => {
-      //     methods.clearFocus();
-      //     state.editFlag = false;
-      //   }
-      // }
     ];
     return () => (
       <div class="visual-editor">
@@ -290,7 +234,11 @@ export const VisualEditor = defineComponent({
         </div>
         <div class="visual-editor-head">
           {buttons.map((btn, index) => (
-            <div key={index} class="visual-editor-head-button">
+            <div
+              key={index}
+              class="visual-editor-head-button"
+              onClick={btn.handler}
+            >
               <i class={`iconfont ${btn.icon}`}></i>
               <span>{btn.label}</span>
             </div>

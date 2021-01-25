@@ -23,28 +23,34 @@ export function useCommander() {
     const registry = (command: Command) => {
         state.commands[command.name] = (...args) => {
             const { undo, redo } = command.execute(...args)
-            if (command.followQueue) {
-                state.queue.push({ undo, redo })
-                state.current += 1
-            }
             redo()
-
+            if (command.followQueue === false) {
+                return
+            }
+            let { queue, current } = state
+            if (queue.length > 0) {
+                queue = queue.slice(0, current + 1)
+                state.queue = queue
+            }
+            queue.push({ undo, redo })
+            state.current = current + 1;
         }
     }
     registry({
         name: 'undo',
-        keyboard: ['ctrl+z'],
+        keyboard: 'ctrl+z',
         followQueue: false,
         execute: () => {
             // 命令被执行的时候，要做的事情
             return {
                 redo: () => {
                     // 重新做一遍，要做的事情
-                    let { current } = state
-                    if (current < 0) return
-                    const { undo } = state.queue[current]
-                    !!undo && undo()
-                    state.current -= 1
+                    if (state.current < 0) return
+                    const queueItem = state.queue[state.current]
+                    if (!!queueItem) {
+                        !!queueItem.undo && queueItem.undo()
+                        state.current--
+                    }
                 }
 
             }
@@ -59,12 +65,12 @@ export function useCommander() {
             return {
                 redo: () => {
                     // 重新做一遍，要做的事情
-                    let { current } = state
+                    const queueItem = state.queue[state.current + 1]
+                    if (!!queueItem) {
+                        queueItem.redo()
+                        state.current++
+                    }
 
-                    if (!state.queue[current]) return
-                    const { redo } = state.queue[current]
-                    redo()
-                    state.current += 1
                 },
             }
         }
