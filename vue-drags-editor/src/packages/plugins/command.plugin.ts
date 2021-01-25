@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, onUnmounted } from 'vue';
 
 export interface CommandExecute {
     undo?: () => void,
@@ -9,18 +9,22 @@ export interface Command {
     name: string,                                    // 命令名称
     execute: (...args: any[]) => CommandExecute,     // 命令执行的逻辑,
     keyboard?: string | string[],                    // 命令被执行的时候，所做的内容
-    followQueue?: boolean                            // 是否遵循命令队列
+    followQueue?: boolean,                       // 是否遵循命令队列
+    init?: any,
+    data?: any,
+    destoty?: () => void,
 }
-
 
 export function useCommander() {
     const state = reactive({
         current: -1,
         queue: [] as CommandExecute[],
-        commands: {} as Record<string, (...args: any[]) => void>
+        commandArray: [] as Command[],
+        commands: {} as Record<string, (...args: any[]) => void>,
+        destoryList: [] as ((() => void) | undefined)[]
     })
-
     const registry = (command: Command) => {
+        state.commandArray.push(command)
         state.commands[command.name] = (...args) => {
             const { undo, redo } = command.execute(...args)
             redo()
@@ -36,6 +40,14 @@ export function useCommander() {
             state.current = current + 1;
         }
     }
+    const init = function () {
+        const onKeydown = (e: KeyboardEvent) => {
+            // console.log('1111')
+        }
+        window.addEventListener('keydown', onKeydown)
+        state.commandArray.forEach(command => !!command.init && state.destoryList.push(command.init()))
+        state.destoryList.push(() => window.removeEventListener('keydown', onKeydown))
+    }
     registry({
         name: 'undo',
         keyboard: 'ctrl+z',
@@ -44,8 +56,10 @@ export function useCommander() {
             // 命令被执行的时候，要做的事情
             return {
                 redo: () => {
-                    // 重新做一遍，要做的事情
-                    if (state.current < 0) return
+
+                    if (state.current === -1) {
+                        return
+                    }
                     const queueItem = state.queue[state.current]
                     if (!!queueItem) {
                         !!queueItem.undo && queueItem.undo()
@@ -64,7 +78,6 @@ export function useCommander() {
             // 命令被执行的时候，要做的事情
             return {
                 redo: () => {
-                    // 重新做一遍，要做的事情
                     const queueItem = state.queue[state.current + 1]
                     if (!!queueItem) {
                         queueItem.redo()
@@ -75,8 +88,12 @@ export function useCommander() {
             }
         }
     })
+    onUnmounted(() => {
+        state.destoryList.forEach(fn => !!fn && fn())
+    })
     return {
         state,
-        registry
+        registry,
+        init
     }
 }
