@@ -47,15 +47,9 @@ export const VisualEditor = defineComponent({
         unfocus // 未选中的组件数据
       };
     });
-
+     // 事件观察者
     const dragstart = createEvent();
     const dragend = createEvent();
-    // dragstart.on(() => {
-    //   console.log('drag start')
-    // })
-    // dragend.on(() => {
-    //   console.log('drag end')
-    // })
     // 菜单组件拖拽到容器事件
     const mutuDraggier = (() => {
       let current = null as null | VisualEditorComponent;
@@ -124,7 +118,6 @@ export const VisualEditor = defineComponent({
         blocks.forEach(block => (block.focus = false));
       },
       updateBlocks: (blocks: VisualEditorBlockData[]) => {
-
         dataModel.value = {
           ...dataModel.value,
           blocks
@@ -180,17 +173,17 @@ export const VisualEditor = defineComponent({
       return {
         container: {
           onMousedown: (e: MouseEvent) => {
-            e.stopPropagation(); // 阻止冒泡
             e.preventDefault(); // 阻止事件默认行为
-            (dataModel.value.blocks || []).forEach(
-              block => (block.focus = false)
-            );
+            if(e.currentTarget  !== e.target)  return
+            if (!e.shiftKey) {
+              methods.clearFocus()
+            }
           }
         },
         block: {
           onMousedown: (e: MouseEvent, block: VisualEditorBlockData) => {
-            e.stopPropagation(); // 阻止冒泡
-            e.preventDefault(); // 阻止事件默认行为
+            // e.stopPropagation(); // 阻止冒泡
+            // e.preventDefault(); // 阻止事件默认行为
             if (e.shiftKey) {
               // shift是否按下
               if (focusData.value.focus.length <= 1) {
@@ -210,7 +203,7 @@ export const VisualEditor = defineComponent({
         }
       };
     })();
-
+    //  命令对象 
     const commander = useVisualCommand({
       focusData,
       methods,
@@ -256,14 +249,16 @@ export const VisualEditor = defineComponent({
         </div>
         <div class="visual-editor-head">
           {buttons.map((btn, index) => (
-            <div
-              key={index}
-              class="visual-editor-head-button"
-              onClick={btn.handler}
-            >
-              <i class={`iconfont ${btn.icon}`}></i>
-              <span>{btn.label}</span>
-            </div>
+            <el-tooltip effect="dark" content={btn.tip} placement="bottom">
+                <div
+                    key={index}
+                    class="visual-editor-head-button"
+                    onClick={btn.handler}
+                  >
+                    <i class={`iconfont ${btn.icon}`}></i>
+                    <span>{btn.label}</span>
+                  </div>
+            </el-tooltip>
           ))}
         </div>
         <div class="visual-editor-operator">visual-editor-operato</div>
