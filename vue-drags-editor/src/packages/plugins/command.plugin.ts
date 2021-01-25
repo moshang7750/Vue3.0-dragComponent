@@ -17,10 +17,10 @@ export interface Command {
 
 export function useCommander() {
     const state = reactive({
-        current: -1,
-        queue: [] as CommandExecute[],
-        commandArray: [] as Command[],
-        commands: {} as Record<string, (...args: any[]) => void>,
+        current: -1,                                                    // 队列中当前的命令
+        queue: [] as CommandExecute[],                                  // 命令队列
+        commandArray: [] as Command[],                                  //  命令对象数组
+        commands: {} as Record<string, (...args: any[]) => void>,       // 命令对象， 方便通过名称执行execute函数
         destoryList: [] as ((() => void) | undefined)[]
     })
     const registry = (command: Command) => {
