@@ -91,11 +91,28 @@ export function useVisualCommand(
       };
     },
   });
-
+  // 清空命令
+  commander.registry({
+    name: 'clear',
+    execute:() => {
+      let before=  deepcopy(dataModel.value.blocks || [])
+      let after = deepcopy([]);
+      return {
+        // 首先执行redo
+        redo: () => {
+          methods.updateBlocks(deepcopy(after));
+        },
+        undo: () => {
+          methods.updateBlocks(deepcopy(before || []));
+        }
+      };
+    },
+  });
   commander.init();
   return {
     undo: () => commander.state.commands.undo(),
     redo: () => commander.state.commands.redo(),
-    delete: () => commander.state.commands.delete()
+    delete: () => commander.state.commands.delete(),
+    clear: () => commander.state.commands.clear(),
   };
 }
