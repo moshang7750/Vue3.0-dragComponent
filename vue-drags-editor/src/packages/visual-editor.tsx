@@ -12,6 +12,7 @@ import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
 import { useVisualCommand } from './utils/visual.command';
 import { $$dialog } from './utils/dialog-service';
+import {ElMessageBox} from 'element-plus'
 export const VisualEditor = defineComponent({
   props: {
     modelValue: {
@@ -228,11 +229,16 @@ export const VisualEditor = defineComponent({
       },
       {
         label: '导入', icon: 'icon-import', handler: async () => {
-          console.log(11111)
-           const  text = await $$dialog.input()
-           console.log('text', text)
+           const  text = await $$dialog.textarea('', '请输入导入的JSON字符串')
+           try {
+              const data = JSON.parse(text ||   '')
+              dataModel.value = data
+           } catch (e) {
+              ElMessageBox.alert('解析JSON字符串出错')
+           }
         }
       },
+      {label: '导出', icon: 'icon-export', handler: () => $$dialog.textarea(JSON.stringify(dataModel.value),  '导出的JSON数据', { editReadonly: true})},
       {
         label: '删除',
         icon: 'icon-delete',
@@ -240,7 +246,6 @@ export const VisualEditor = defineComponent({
         tip: 'ctrl+d, backspace, delete'
       },
      
-      // {label: '导出', icon: 'icon-export', handler: () => $dialog.textarea(JSON.stringify(dataModel.value), {title: '导出的JSON数据', editReadonly: true})},
       {label: '清空', icon: 'icon-reset', handler: () => commander.clear()},
     ];
     return () => (
