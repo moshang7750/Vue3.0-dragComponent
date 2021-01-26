@@ -1,5 +1,6 @@
-import { defineComponent, PropType, reactive } from "vue"
+import { createApp, defineComponent, getCurrentInstance, PropType, reactive } from "vue"
 import { defer } from "./defer"
+import {ElInput, ElDialog, ElButton}  from  'element-plus'
 
 enum DialogServiceEditType {
     textarea = "textarea",
@@ -17,47 +18,84 @@ const ServiceComponent = defineComponent({
         option: {type: Object as PropType<DialogServiceOption>, required: true}
     },
     setup(props) {
+        const ctx  = getCurrentInstance()!
         const  state = reactive({
             option: props.option,
+            editValue: null as undefined | null | string,
             showFlag: false
         })
-        return () => {
-            <el-dialog  v-model={state.showFlag}>
-                {{
-                    default: ()=>( <div>
-                        {state.option.editType === DialogServiceEditType.textarea?(
-                            <el-input  type="textarea"  row={10} />
-                        ):(
-                            <el-input   row={10} />
-                        )}
-                    </div>),
-                    footer: () => ( <div>
-                        <el-button type="text">取消</el-button>
-                        <el-button type="primary">确定</el-button>
-                    </div>)
-                }}
-            </el-dialog>
+        const methods = {
+            service:(option: DialogServiceOption) =>  {
+                state.option = option
+                state.editValue  = option.editValue
+                methods.show()
+            },
+            show: () => {
+                state.showFlag = true
+            },
+            hide: () => {
+                state.showFlag = false
+            }
         }
+        const handler  = {
+            onConfirm: ()  =>  {
+                state.option.onConfirm(state.editValue)
+                methods.hide()
+            },
+            onCencel: () => {
+                methods.hide()
+            }
+        }
+        Object.assign(ctx.proxy, methods)
+        return () => (
+             // @ts-ignore
+             <ElDialog  v-model={state.showFlag}>
+             {{
+                 default: ()=>( <div>
+                     {state.option.editType === DialogServiceEditType.textarea?(
+                         <ElInput  type="textarea" {...{rows: 10}} v-model={state.editValue} />
+                     ):(
+                         <ElInput   v-model={state.editValue} />
+                     )}
+                 </div>),
+                 footer: () => ( <div>
+                     <ElButton type="text"  {...{onClick:handler.onCencel}} >取消</ElButton>
+                     <ElButton type="primary" {...{onClick:handler.onConfirm}} >确定</ElButton>
+                 </div>)
+             }}
+         </ElDialog>
+        )
+           
     }
 })
 
-const DialogService = (option:DialogServiceOption) => {
 
-}
+const DialogService = (()=> {
+    let ins: any
+    return   (option: DialogServiceOption) => {
+        if(!ins)  {
+           const el  =  document.createElement('div')
+           document.body.appendChild(el)
+           const app = createApp(ServiceComponent,{option})
+           ins  = app.mount(el)
+        }
+        ins.service(option)
+    }
+})()
 
 export const $$dialog = Object.assign(DialogService, {
-    input: (initValue?: string, option?:DialogServiceOption ) => {
+    input: (initValue?: string, option?: DialogServiceOption ) => {
         const dfd = defer<string | null | undefined>()
-        const opt:DialogServiceOption = option || {
+        const opt: DialogServiceOption = option || {
             editType: DialogServiceEditType.input,
             onConfirm: dfd.resolve
         }
         DialogService(opt)
         return dfd.promise
     },
-    textarea: (initValue?: string, option?:DialogServiceOption ) => {
+    textarea: (initValue?: string, option?: DialogServiceOption ) => {
         const dfd = defer<string | null | undefined>()
-        const opt:DialogServiceOption = option || {
+        const opt:  DialogServiceOption = option || {
             editType: DialogServiceEditType.textarea,
             onConfirm: dfd.resolve
         }

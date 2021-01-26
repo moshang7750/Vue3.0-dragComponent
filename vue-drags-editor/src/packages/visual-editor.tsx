@@ -11,6 +11,7 @@ import {
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
 import { useVisualCommand } from './utils/visual.command';
+import { $$dialog } from './utils/dialog-service';
 export const VisualEditor = defineComponent({
   props: {
     modelValue: {
@@ -226,11 +227,20 @@ export const VisualEditor = defineComponent({
         tip: 'ctrl+y, ctrl+shift+z'
       },
       {
+        label: '导入', icon: 'icon-import', handler: async () => {
+          console.log(11111)
+           const  text = await $$dialog.input()
+           console.log('text', text)
+        }
+      },
+      {
         label: '删除',
         icon: 'icon-delete',
         handler: () => commander.delete(),
         tip: 'ctrl+d, backspace, delete'
       },
+     
+      // {label: '导出', icon: 'icon-export', handler: () => $dialog.textarea(JSON.stringify(dataModel.value), {title: '导出的JSON数据', editReadonly: true})},
       {label: '清空', icon: 'icon-reset', handler: () => commander.clear()},
     ];
     return () => (
