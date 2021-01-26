@@ -1,10 +1,13 @@
 export interface VisualEditorBlockData {
     top: number,
     left: number,
-    componentKey: string,           //  组件的唯一标识
+    componentKey: string,               //  组件的唯一标识
     adjustPosition: boolean,
-    focus: boolean                  //  是否选中
-    zIndex: number                  // z-index
+    focus: boolean                      //  是否选中
+    zIndex: number,                     // z-index
+    width: number,                      // 组件宽度         
+    height: number,                     // 组件高度 
+    hasResize: boolean                  // 是否调整过宽度或者高度
 }
 export interface VisualEditorModelValue {
     container: {
@@ -19,6 +22,11 @@ export interface VisualEditorComponent {
     label: string,
     preview: () => JSX.Element,
     render: () => JSX.Element
+}
+
+export interface VisualEditorMarkLine {
+    x: { left: number, showLeft: number }[]
+    y: { top: number, showTop: number }[]
 }
 
 export function createNewBlock({
@@ -36,7 +44,10 @@ export function createNewBlock({
         componentKey: component!.key,
         adjustPosition: true,
         focus: false,
-        zIndex: 0
+        zIndex: 0,
+        width: 0,
+        height: 0,
+        hasResize: false
     }
 }
 

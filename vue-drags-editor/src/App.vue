@@ -12,31 +12,58 @@ export default defineComponent({
   data() {
     return {
       visualConFig,
+
       jsonData: {
-        container: {
-          width: 800,
-          height: 500
-        },
+        container: { width: 800, height: 500 },
         blocks: [
           {
-            left: 100,
-            top: 100,
-            componentKey: 'button'
+            top: 77,
+            left: 172,
+            componentKey: 'text',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 64,
+            height: 22,
+            hasResize: false,
           },
           {
-            left: 200,
-            top: 300,
-            componentKey: 'text'
+            top: 197,
+            left: 248,
+            componentKey: 'button',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 98,
+            height: 40,
+            hasResize: false,
           },
           {
-            left: 200,
-            top: 200,
-            componentKey: 'input'
-          }
-        ]
-      }
+            top: 338,
+            left: 262,
+            componentKey: 'input',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 178,
+            height: 40,
+            hasResize: false,
+          },
+          {
+            top: 101,
+            left: 491,
+            componentKey: 'button',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 98,
+            height: 40,
+            hasResize: false,
+          },
+        ],
+      },
     }
-  }
+  },
 })
 </script>
 
