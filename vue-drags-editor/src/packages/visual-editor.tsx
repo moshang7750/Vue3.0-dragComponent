@@ -35,13 +35,13 @@ export const VisualEditor = defineComponent({
     /*容器节点样式*/
     const containerStyles = computed(() => ({
       width: `${dataModel.value.container.width}px`,
-      height: `${dataModel.value.container.height}px`
+      height: `${dataModel.value.container.height}px`,
     }));
     // 计算选中与为选中的组件数据
     const focusData = computed(() => {
       let focus: VisualEditorBlockData[] = [];
       let unfocus: VisualEditorBlockData[] = [];
-      dataModel.value.blocks.forEach(block => {
+      dataModel.value.blocks?.forEach(block => {
         (block.focus ? focus : unfocus).push(block);
       });
       return {
@@ -99,8 +99,8 @@ export const VisualEditor = defineComponent({
           blocks.push(createNewBlock({
               component: current!,
               top: e.offsetY,
-              left: e.offsetX
-            })
+              left: e.offsetX,
+            })  
           );
           // 更新最新的组件数据
           methods.updateBlocks(blocks);
@@ -119,7 +119,7 @@ export const VisualEditor = defineComponent({
         }
         blocks.forEach(block => (block.focus = false));
       },
-      updateBlocks: (blocks: VisualEditorBlockData[]) => {
+      updateBlocks: (blocks?: VisualEditorBlockData[]) => {
         dataModel.value = {
           ...dataModel.value,
           blocks
@@ -245,7 +245,8 @@ export const VisualEditor = defineComponent({
         handler: () => commander.delete(),
         tip: 'ctrl+d, backspace, delete'
       },
-     
+      {label: '置顶', icon: 'icon-place-top', handler: () => commander.placeTop(), tip: 'ctrl+up'},
+      {label: '置底', icon: 'icon-place-bottom', handler: () => commander.placeBottom(), tip: 'ctrl+down'},
       {label: '清空', icon: 'icon-reset', handler: () => commander.clear()},
     ];
     return () => (
@@ -292,7 +293,7 @@ export const VisualEditor = defineComponent({
               {...focusHandler.container}
             >
               {!!dataModel.value &&
-                dataModel.value.blocks.map((block, index) => (
+                dataModel.value.blocks?.map((block, index) => (
                   <VisualEditorBlock
                     config={props.config}
                     block={block}

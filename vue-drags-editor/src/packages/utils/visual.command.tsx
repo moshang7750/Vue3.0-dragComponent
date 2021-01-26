@@ -20,7 +20,7 @@ export function useVisualCommand(
       };
     };
     methods: {
-      updateBlocks: (blocks: VisualEditorBlockData[]) => void;
+      updateBlocks: (blocks?: VisualEditorBlockData[]) => void;
     };
     dataModel: {
       value: VisualEditorModelValue;
@@ -108,11 +108,74 @@ export function useVisualCommand(
       };
     },
   });
+
+    // 置顶
+    commander.registry({
+      name: 'placeTop',
+      keyboard: 'ctrl+up',
+      execute:() => {
+        let before=  deepcopy(dataModel.value.blocks || [])
+        let after = deepcopy((()=>{
+          const {focus, unfocus} = focusData.value
+          const maxZIndex = unfocus.reduce((prev,block)=> {
+              return Math.max(prev,block.zIndex) + 1
+          },-Infinity)
+          focus.forEach(block =>  block.zIndex = maxZIndex)
+          return deepcopy(dataModel.value.blocks  || [])
+        })());
+        return {
+          // 首先执行redo
+          redo: () => {
+            methods.updateBlocks(deepcopy(after))
+          },
+          undo: () => {
+            methods.updateBlocks(deepcopy(before))
+          }
+        };
+      },
+    });
+    // 置底
+    commander.registry({
+      name: 'placeBottom',
+      keyboard: 'ctrl+down',
+      execute:() => {
+        let before=  deepcopy(dataModel.value.blocks || [])
+        let after = deepcopy((()=>{
+          const {focus, unfocus} = focusData.value
+          let mixZIndex = unfocus.reduce((prev,block)=> {
+              return Math.min(prev,block.zIndex) - 1
+          },Infinity)
+          if(mixZIndex < 0) {
+            const dur  =  Math.abs(mixZIndex)
+            unfocus.forEach(block =>  block.zIndex += dur )
+            mixZIndex = 0
+          }
+          focus.forEach(block =>  block.zIndex = mixZIndex)
+          return deepcopy(dataModel.value.blocks)
+        })());
+        return {
+          // 首先执行redo
+          redo: () => {
+            methods.updateBlocks(deepcopy(after))
+          },
+          undo: () => {
+            methods.updateBlocks(deepcopy(before))
+          }
+        };
+      },
+    });
+
+
   commander.init();
   return {
     undo: () => commander.state.commands.undo(),
     redo: () => commander.state.commands.redo(),
     delete: () => commander.state.commands.delete(),
     clear: () => commander.state.commands.clear(),
+    placeTop: () => commander.state.commands.placeTop(),
+    placeBottom: () => commander.state.commands.placeBottom(),
+
+    
   };
+
 }

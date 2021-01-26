@@ -4,14 +4,14 @@ export interface VisualEditorBlockData {
     componentKey: string,           //  组件的唯一标识
     adjustPosition: boolean,
     focus: boolean                  //  是否选中
-
+    zIndex: number                  // z-index
 }
 export interface VisualEditorModelValue {
     container: {
         height: number,                                             // 容器高度
         width: number,                                              // 容器宽度
     },
-    blocks: VisualEditorBlockData[],                                // block数据
+    blocks?: VisualEditorBlockData[],                                // block数据
 }
 
 export interface VisualEditorComponent {
@@ -35,7 +35,8 @@ export function createNewBlock({
         left,
         componentKey: component!.key,
         adjustPosition: true,
-        focus: false
+        focus: false,
+        zIndex: 0
     }
 }
 
