@@ -1,6 +1,7 @@
 import { defineComponent, PropType, computed, onMounted, ref } from 'vue';
 import {
   VisualEditorBlockData,
+  
   VisualEditorConfig
 } from './visual-editor.utils';
 

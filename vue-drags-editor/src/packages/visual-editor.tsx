@@ -147,11 +147,18 @@ export const VisualEditor = defineComponent({
         document.addEventListener('mouseup', mouseup);
       };
       const mousemove = (e: MouseEvent) => {
-        const durX = e.clientX - dragState.startX;
-        const durY = e.clientY - dragState.startY;
+        let durX = e.clientX - dragState.startX;
+        let durY = e.clientY - dragState.startY;
         if(!dragState.dragging) {
           dragState.dragging = true
           dragstart.emit()
+        }
+        if(e.shiftKey)  {
+          if(Math.abs(durX)  > Math.abs(durY)) { // 以横向为主
+            durY = 0
+          } else{
+            durX= 0
+          }
         }
         focusData.value.focus.forEach(
           (block: VisualEditorBlockData, index: number) => {
