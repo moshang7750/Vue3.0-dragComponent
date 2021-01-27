@@ -1,0 +1,26 @@
+.dropdown-service{
+    padding: 5px 0;
+    position: absolute;
+    z-index: 99;
+    box-shadow: 0 2px 5px 1px #ddd;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms linear; 
+    .dropdown-service-option{
+        padding: 5px 12px;
+        font-size: 14px;
+        &:hover{
+            background: #efefef;
+            cursor: pointer;
+        }
+        & > i{
+            margin-right: 4px;
+        }
+        
+    }
+    &.dropdown-service-show{
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

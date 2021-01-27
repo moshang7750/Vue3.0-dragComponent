@@ -14,6 +14,7 @@ import { VisualEditorBlock } from './visual-editor-block';
 import { useVisualCommand } from './utils/visual.command';
 import { $$dialog } from './utils/dialog-service';
 import {ElMessageBox} from 'element-plus'
+import { $$dropdown, DropdownOption } from './utils/dropdown.service';
 export const VisualEditor = defineComponent({
   props: {
     modelValue: {
@@ -115,6 +116,7 @@ export const VisualEditor = defineComponent({
     })();
     // 事件
     const methods = {
+     
       clearFocus: (block?: VisualEditorBlockData) => {
         let blocks = dataModel.value.blocks || [];
         if (blocks.length == 0) return;
@@ -128,6 +130,18 @@ export const VisualEditor = defineComponent({
           ...dataModel.value,
           blocks
         };
+      },
+      showBlockData: (block: VisualEditorBlockData) => {
+        $$dialog.textarea(JSON.stringify(block),'节点数据', { editReadonly: true})
+      },
+      importBlockData: async (block: VisualEditorBlockData) => {
+         const text = await  $$dialog.textarea('','请输入节点JSON字符串')
+         try {
+            const data = JSON.parse(text ||   '')
+            commander.updateBlock(data, block)
+         } catch (error) {
+          ElMessageBox.alert('解析JSON字符串出错')
+         }
       }
     };
     const blockDraggier = (() => {
@@ -236,6 +250,7 @@ export const VisualEditor = defineComponent({
       const mouseup = (e: MouseEvent) => {
         document.removeEventListener('mousemove', mousemove);
         document.removeEventListener('mouseup', mouseup);
+        mark.x = mark.y = null
         if(dragState.dragging){
           dragend.emit()
         }
@@ -280,6 +295,25 @@ export const VisualEditor = defineComponent({
         }
       };
     })();
+    // 右键菜单处理函数
+    const handler = {
+      onContextmetuBlock: (e: MouseEvent,  block: VisualEditorBlockData) => {
+        e.stopPropagation()
+        e.preventDefault()
+        $$dropdown({
+          reference: e,
+          content: () => (
+            <>
+              <DropdownOption label="置顶节点" icon="icon-place-top" {...{onClick: commander.placeTop}}/>
+              <DropdownOption label="置底节点" icon="icon-place-bottom" {...{onClick: commander.placeBottom}}/>
+              <DropdownOption label="删除节点" icon="icon-delete" {...{onClick: commander.delete}}/>
+              <DropdownOption label="查看数据" icon="icon-browse" {...{onClick: () => methods.showBlockData(block)}}/>
+              <DropdownOption label="导入节点" icon="icon-import" {...{onClick: () => methods.importBlockData(block)}}/>
+            </>
+          )
+        })
+      }
+    }
     //  命令对象 
     const commander = useVisualCommand({
       focusData,
@@ -375,7 +409,8 @@ export const VisualEditor = defineComponent({
                     key={index}
                     {...{
                       onMousedown: (e: MouseEvent) =>
-                        focusHandler.block.onMousedown(e, block)
+                        focusHandler.block.onMousedown(e, block),
+                        onContextmenu: (e: MouseEvent) =>  handler.onContextmetuBlock(e,block)
                     }}
                   />
                 ))}
