@@ -1,3 +1,5 @@
+import { VisualEditorProps } from "./visual-editor.props"
+
 export interface VisualEditorBlockData {
     top: number,
     left: number,
@@ -7,7 +9,8 @@ export interface VisualEditorBlockData {
     zIndex: number,                     // z-index
     width: number,                      // 组件宽度         
     height: number,                     // 组件高度 
-    hasResize: boolean                  // 是否调整过宽度或者高度
+    hasResize: boolean,                 // 是否调整过宽度或者高度
+    props: Record<string, any>          //  组件设计属性 
 }
 export interface VisualEditorModelValue {
     container: {
@@ -21,7 +24,8 @@ export interface VisualEditorComponent {
     key: string,
     label: string,
     preview: () => JSX.Element,
-    render: () => JSX.Element
+    render: () => JSX.Element,
+    props?: Record<string, VisualEditorProps>
 }
 
 export interface VisualEditorMarkLine {
