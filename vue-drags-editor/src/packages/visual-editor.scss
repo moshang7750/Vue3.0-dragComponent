@@ -143,6 +143,11 @@ $primary: #409EFF;
         width: $operatorSize;
         background: white;
         z-index: 10;
+        padding: 20px 10px 300px 10px  ;
+        box-sizing: border-box;
+        .el-select , .el-input-number {
+            width: 100%;
+        }
     }
 
     &>.visual-editor-body {

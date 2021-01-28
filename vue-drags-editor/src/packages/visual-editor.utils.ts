@@ -51,7 +51,8 @@ export function createNewBlock({
         zIndex: 0,
         width: 0,
         height: 0,
-        hasResize: false
+        hasResize: false,
+        props: {}
     }
 }
 
