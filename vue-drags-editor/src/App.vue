@@ -60,6 +60,18 @@ export default defineComponent({
             height: 40,
             hasResize: false,
           },
+          {
+            top: 197,
+            left: 407.5,
+            componentKey: 'select',
+            adjustPosition: false,
+            focus: true,
+            zIndex: 0,
+            width: 193,
+            height: 40,
+            hasResize: false,
+            props: { options: [{ label: '1111', value: '2222' }] },
+          },
         ],
       },
     }

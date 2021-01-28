@@ -175,22 +175,14 @@ $primary: #409EFF;
 
                 &>.visual-editor-block {
                     position: absolute;
-
-                    &:after {
-                        $space: 3px;
-                        position: absolute;
-                        left: -$space;
-                        top: -$space;
-                        right: -$space;
-                        bottom: -$space;
-                        content: '';
-                    }
-
                     &.visual-editor-block-focus {
                         &:after {
                             border: 1px dashed $primary;
                         }
                     }
+                   
+
+                   
                 }
                 .visual-editor-mark-line-y{
                     position: absolute;
@@ -207,5 +199,22 @@ $primary: #409EFF;
             }
         }
     }
-
+    &.visual-editor-editing{
+        .visual-editor-container{
+            border: dashed 1px $primary;
+            box-sizing: border-box;
+            .visual-editor-block {
+                &:after {
+                    $space: 3px;
+                    position: absolute;
+                    left: -$space;
+                    top: -$space;
+                    right: -$space;
+                    bottom: -$space;
+                    content: '';
+                }
+               
+            }   
+        }
+    }
 }

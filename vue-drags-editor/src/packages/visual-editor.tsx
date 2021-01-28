@@ -55,8 +55,17 @@ export const VisualEditor = defineComponent({
     // 存储选中组件的下标 用来更新数据
     const selectIndex = ref(-1)
     const state = reactive(({
-      selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value])
+      selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value]),
+      editing: false
     }))
+
+    const classes = computed(() => [
+      'visual-editor',
+      {
+        'visual-editor-editing': state.editing
+      }
+    ]);
+
     // 事件观察者
     const dragstart = createEvent();
     const dragend = createEvent();
@@ -271,6 +280,7 @@ export const VisualEditor = defineComponent({
       return {
         container: {
           onMousedown: (e: MouseEvent) => {
+            if (!state.editing) return
             e.preventDefault(); // 阻止事件默认行为
             if (e.currentTarget !== e.target) return
             if (!e.shiftKey) {
@@ -281,6 +291,7 @@ export const VisualEditor = defineComponent({
         },
         block: {
           onMousedown: (e: MouseEvent, block: VisualEditorBlockData, index: number) => {
+            if (!state.editing) return
             // e.stopPropagation(); // 阻止冒泡
             // e.preventDefault(); // 阻止事件默认行为
             if (e.shiftKey) {
@@ -306,6 +317,7 @@ export const VisualEditor = defineComponent({
     // 右键菜单处理函数
     const handler = {
       onContextmetuBlock: (e: MouseEvent, block: VisualEditorBlockData) => {
+        if (!state.editing) return
         e.stopPropagation()
         e.preventDefault()
         $$dropdown({
@@ -345,6 +357,14 @@ export const VisualEditor = defineComponent({
         tip: 'ctrl+y, ctrl+shift+z'
       },
       {
+        label: () => state.editing ? '编辑' : '预览',
+        icon: () => state.editing ? 'icon-edit' : 'icon-browse',
+        handler: () => {
+          if (!state.editing) { methods.clearFocus() }
+          state.editing = !state.editing
+        },
+      },
+      {
         label: '导入', icon: 'icon-import', handler: async () => {
           const text = await $$dialog.textarea('', '请输入导入的JSON字符串')
           try {
@@ -367,7 +387,7 @@ export const VisualEditor = defineComponent({
       { label: '清空', icon: 'icon-reset', handler: () => commander.clear() },
     ];
     return () => (
-      <div class="visual-editor">
+      <div class={classes.value}>
         <div class="visual-editor-metu">
           {props.config.componentList.map(comp => (
             <div
@@ -383,13 +403,15 @@ export const VisualEditor = defineComponent({
         </div>
         <div class="visual-editor-head">
           {buttons.map((btn, index) => {
+            const label = typeof btn.label == 'function' ? btn.label() : btn.label
+            const icon = typeof btn.icon == 'function' ? btn.icon() : btn.icon
             const content = (<div
               key={index}
               class="visual-editor-head-button"
               onClick={btn.handler}
             >
-              <i class={`iconfont ${btn.icon}`}></i>
-              <span>{btn.label}</span>
+              <i class={`iconfont ${icon}`}></i>
+              <span>{label}</span>
             </div>)
             return !btn.tip ? content : (
               <el-tooltip effect="dark" content={btn.tip} placement="bottom">
