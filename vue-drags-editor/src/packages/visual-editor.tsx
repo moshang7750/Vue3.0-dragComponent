@@ -11,7 +11,7 @@ import {
 } from './visual-editor.utils';
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
-import { useVisualCommand } from './utils/visual.command';
+import { useVisualCommand } from './visual.command';
 import { $$dialog } from './utils/dialog-service';
 import { ElMessageBox } from 'element-plus'
 import { $$dropdown, DropdownOption } from './utils/dropdown.service';
@@ -393,7 +393,13 @@ export const VisualEditor = defineComponent({
 
           )}
         </div>
-        <VisualEditorOperato block={state.selectBlock} config={props.config} dataModel={dataModel} />
+        <VisualEditorOperato
+          block={state.selectBlock}
+          config={props.config}
+          dataModel={dataModel}
+          updateBlock={commander.updateBlock}
+          updateModelValue={commander.updateModelValue}
+        />
         <div class="visual-editor-body">
           <div class="visual-editor-content">
             <div

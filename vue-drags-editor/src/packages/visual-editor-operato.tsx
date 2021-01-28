@@ -1,6 +1,6 @@
 import { defineComponent, PropType, reactive, watch } from "vue";
 import { VisualEditorBlockData, VisualEditorConfig, VisualEditorModelValue } from "./visual-editor.utils";
-import { ElColorPicker, ElForm, ElFormItem, ElInput, ElInputNumber, ElOption, ElSelect } from 'element-plus'
+import { ElButton, ElColorPicker, ElForm, ElFormItem, ElInput, ElInputNumber, ElOption, ElSelect } from 'element-plus'
 import { VisualEditorProps, VisualEditorPropsType } from "./visual-editor.props";
 import deepcopy from "deepcopy";
 
@@ -9,17 +9,39 @@ export const VisualEditorOperato = defineComponent({
         block: { type: Object as PropType<VisualEditorBlockData> },
         config: { type: Object as PropType<VisualEditorConfig>, required: true },
         dataModel: { type: Object as PropType<{ value: VisualEditorModelValue }>, required: true },
+        updateBlock: { type: Function as PropType<(newBlock: VisualEditorBlockData, oldBlock: VisualEditorBlockData) => void>, required: true },
+        updateModelValue: { type: Function as PropType<(val: VisualEditorModelValue) => void>, required: true },
     },
     setup(props) {
         const state = reactive({
             editData: '' as any
         })
-        watch(() => props.block, (val) => {
-            if (!val) {  // 编辑容器
-                state.editData = deepcopy(props.dataModel.value.container)
-            } else {  // 编辑组件 
-                state.editData = deepcopy(val.props || {})
+        const methods = {
+            apply: () => {
+                if (!props.block) { // 编辑容器
+                    props.updateModelValue({
+                        ...props.dataModel.value,
+                        container: state.editData
+                    })
+                } else { // 编辑组件
+                    props.updateBlock({
+                        ...props.block,
+                        props: state.editData
+                    }, props.block)
+                }
+            },
+            reset: () => {
+                if (!props.block) {  // 编辑容器
+                    state.editData = deepcopy(props.dataModel.value.container)
+                } else {  // 编辑组件 
+                    state.editData = deepcopy(props.block.props || {})
+                }
             }
+        }
+        watch(() => props.block, () => {
+
+            methods.reset()
+
         }, {
             immediate: true
         })
@@ -43,10 +65,10 @@ export const VisualEditorOperato = defineComponent({
             if (!props.block) {
                 content = <>
                     <ElFormItem label="容器宽度">
-                        <ElInputNumber v-model={state.editData.width} />
+                        <ElInputNumber v-model={state.editData.width} {...{ step: 100 } as any} />
                     </ElFormItem>
                     <ElFormItem label="容器高度">
-                        <ElInputNumber v-model={state.editData.height} />
+                        <ElInputNumber v-model={state.editData.height} {...{ step: 100 } as any} />
                     </ElFormItem>
                 </>
             } else {
@@ -78,6 +100,10 @@ export const VisualEditorOperato = defineComponent({
                 <div class="visual-editor-operator">
                     <ElForm labelPosition="top">
                         {content}
+                        <ElFormItem>
+                            <ElButton type="primary" {...{ onClick: methods.apply } as any}> 应用</ElButton>
+                            <ElButton type="default" {...{ onClick: methods.reset } as any}>重置</ElButton>
+                        </ElFormItem>
                     </ElForm>
                 </div>
             )
