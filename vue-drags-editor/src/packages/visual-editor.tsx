@@ -172,9 +172,14 @@ export const VisualEditor = defineComponent({
           dragging: false,
           markLines: (() => {
             const { focus, unfocus } = focusData.value
-            const { top, left, width, height, hasResize } = state.selectBlock!
-            let lines: VisualEditorMarkLine = { x: [], y: [] }
-            unfocus.forEach(block => {
+            const { top, left, width, height } = state.selectBlock!
+            let lines: VisualEditorMarkLine = { x: [], y: [] };
+            [...unfocus, {
+              top: 0,
+              left: 0,
+              width: dataModel.value.container.width,
+              height: dataModel.value.container.height
+            }].forEach(block => {
               const { top: t, left: l, width: w, height: h } = block
               lines.y.push({ top: t, showTop: t })                                // 顶部对齐顶部
               lines.y.push({ top: t + h, showTop: t + h })                        // 顶部对齐底部
@@ -205,9 +210,9 @@ export const VisualEditor = defineComponent({
         const { startX, startY } = dragState
         if (e.shiftKey) { // 水平 或垂直移动
           if (Math.abs(moveX - startX) > Math.abs(moveY - startY)) { // 以横向为主
-            moveX = startX
-          } else {
             moveY = startY
+          } else {
+            moveX = startX
           }
         }
 
