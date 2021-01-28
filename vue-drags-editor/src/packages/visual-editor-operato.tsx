@@ -24,10 +24,12 @@ export const VisualEditorOperato = defineComponent({
                         container: state.editData
                     })
                 } else { // 编辑组件
-                    props.updateBlock({
+                    const newBlock = {
                         ...props.block,
                         props: state.editData
-                    }, props.block)
+                    }
+
+                    props.updateBlock(newBlock, props.block)
                 }
             },
             reset: () => {
@@ -39,9 +41,7 @@ export const VisualEditorOperato = defineComponent({
             }
         }
         watch(() => props.block, () => {
-
             methods.reset()
-
         }, {
             immediate: true
         })

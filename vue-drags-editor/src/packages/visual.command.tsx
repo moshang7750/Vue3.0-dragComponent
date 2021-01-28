@@ -169,7 +169,7 @@ export function useVisualCommand(
     execute: (newBlock: VisualEditorBlockData, oldBlock: VisualEditorBlockData) => {
       let blocks = deepcopy(dataModel.value.blocks || [])
       let data = {
-        before: deepcopy(dataModel.value.blocks),
+        before: blocks,
         after: (() => {
           blocks = [...blocks]
           const index = dataModel.value.blocks!.indexOf(oldBlock)

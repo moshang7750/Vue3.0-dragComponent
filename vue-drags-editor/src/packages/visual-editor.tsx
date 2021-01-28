@@ -52,8 +52,10 @@ export const VisualEditor = defineComponent({
         unfocus // 未选中的组件数据
       };
     });
+    // 存储选中组件的下标 用来更新数据
+    const selectIndex = ref(-1)
     const state = reactive(({
-      selectBlock: undefined as undefined | VisualEditorBlockData, // 当前选中的组件
+      selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value])
     }))
     // 事件观察者
     const dragstart = createEvent();
@@ -273,12 +275,12 @@ export const VisualEditor = defineComponent({
             if (e.currentTarget !== e.target) return
             if (!e.shiftKey) {
               methods.clearFocus()
-              state.selectBlock = undefined
+              selectIndex.value = -1
             }
           }
         },
         block: {
-          onMousedown: (e: MouseEvent, block: VisualEditorBlockData) => {
+          onMousedown: (e: MouseEvent, block: VisualEditorBlockData, index: number) => {
             // e.stopPropagation(); // 阻止冒泡
             // e.preventDefault(); // 阻止事件默认行为
             if (e.shiftKey) {
@@ -295,7 +297,7 @@ export const VisualEditor = defineComponent({
                 methods.clearFocus(block);
               }
             }
-            state.selectBlock = block
+            selectIndex.value = index
             blockDraggier.mousedown(e);
           }
         }
@@ -421,7 +423,7 @@ export const VisualEditor = defineComponent({
                     key={index}
                     {...{
                       onMousedown: (e: MouseEvent) =>
-                        focusHandler.block.onMousedown(e, block),
+                        focusHandler.block.onMousedown(e, block, index),
                       onContextmenu: (e: MouseEvent) => handler.onContextmetuBlock(e, block)
                     }}
                   />

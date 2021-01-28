@@ -1,7 +1,7 @@
 import { defineComponent, PropType, computed, onMounted, ref } from 'vue';
 import {
   VisualEditorBlockData,
-  
+
   VisualEditorConfig
 } from './visual-editor.utils';
 
@@ -31,7 +31,7 @@ export const VisualEditorBlock = defineComponent({
         const { offsetWidth, offsetHeight } = el.value;
         block.left = block.left - offsetWidth / 2;
         block.top = block.top - offsetHeight / 2;
-        block.width  = offsetWidth
+        block.width = offsetWidth
         block.height = offsetHeight
         block.adjustPosition = false;
       }
@@ -39,7 +39,10 @@ export const VisualEditorBlock = defineComponent({
 
     return () => {
       const component = props.config.componentMap[props.block.componentKey];
-      const Render = component.render();
+      //  传递参数到左侧自定义组件中
+      const Render = component.render({
+        props: props.block.props || {}
+      });
       return (
         <div class={classes.value} style={styles.value} ref={el}>
           {Render}
