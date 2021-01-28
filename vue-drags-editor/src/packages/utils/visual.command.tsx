@@ -56,7 +56,7 @@ export function useVisualCommand(
     * 拖拽 命令, 适用于三种情况
     * 1 从菜单拖拽组件到容器画布
     * 2 在容器中拖拽组件 调整位置
-    * 3 通过命令 调整位置
+    * 3 拖拽 调整组件的宽高
     * 
   */
   commander.registry({
@@ -108,87 +108,87 @@ export function useVisualCommand(
       };
     },
   });
+  // 置顶
+  commander.registry({
+    name: 'placeTop',
+    keyboard: 'ctrl+up',
+    execute:() => {
+      let before=  deepcopy(dataModel.value.blocks || [])
+      let after = deepcopy((()=>{
+        const {focus, unfocus} = focusData.value
+        const maxZIndex = unfocus.reduce((prev,block)=> {
+            return Math.max(prev,block.zIndex) + 1
+        },-Infinity)
+        focus.forEach(block =>  block.zIndex = maxZIndex)
+        return deepcopy(dataModel.value.blocks  || [])
+      })());
+      return {
+        // 首先执行redo
+        redo: () => {
+          methods.updateBlocks(deepcopy(after))
+        },
+        undo: () => {
+          methods.updateBlocks(deepcopy(before))
+        }
+      };
+    },
+  });
+  // 置底
+  commander.registry({
+    name: 'placeBottom',
+    keyboard: 'ctrl+down',
+    execute:() => {
+      let before=  deepcopy(dataModel.value.blocks || [])
+      let after = deepcopy((()=>{
+        const {focus, unfocus} = focusData.value
+        let mixZIndex = unfocus.reduce((prev,block)=> {
+            return Math.min(prev,block.zIndex) - 1
+        },Infinity)
+        if(mixZIndex < 0) {
+          const dur  =  Math.abs(mixZIndex)
+          unfocus.forEach(block =>  block.zIndex += dur )
+          mixZIndex = 0
+        }
+        focus.forEach(block =>  block.zIndex = mixZIndex)
+        return deepcopy(dataModel.value.blocks)
+      })());
+      return {
+        // 首先执行redo
+        redo: () => {
+          methods.updateBlocks(deepcopy(after))
+        },
+        undo: () => {
+          methods.updateBlocks(deepcopy(before))
+        }
+      };
+    },
+  });
 
-    // 置顶
-    commander.registry({
-      name: 'placeTop',
-      keyboard: 'ctrl+up',
-      execute:() => {
-        let before=  deepcopy(dataModel.value.blocks || [])
-        let after = deepcopy((()=>{
-          const {focus, unfocus} = focusData.value
-          const maxZIndex = unfocus.reduce((prev,block)=> {
-              return Math.max(prev,block.zIndex) + 1
-          },-Infinity)
-          focus.forEach(block =>  block.zIndex = maxZIndex)
-          return deepcopy(dataModel.value.blocks  || [])
-        })());
-        return {
-          // 首先执行redo
-          redo: () => {
-            methods.updateBlocks(deepcopy(after))
-          },
-          undo: () => {
-            methods.updateBlocks(deepcopy(before))
+  commander.registry({
+    name: 'updateBlock',
+    execute: (newBlock: VisualEditorBlockData, oldBlock: VisualEditorBlockData) => {
+      let blocks =  deepcopy(dataModel.value.blocks || [])
+      let data  ={
+        before: deepcopy(dataModel.value.blocks),
+        after: (()=> {
+          blocks =  [...blocks]
+          const index  =  dataModel.value.blocks!.indexOf(oldBlock)
+          if(index  >  -1){
+          blocks.splice(index,  1, newBlock)
           }
-        };
-      },
-    });
-    // 置底
-    commander.registry({
-      name: 'placeBottom',
-      keyboard: 'ctrl+down',
-      execute:() => {
-        let before=  deepcopy(dataModel.value.blocks || [])
-        let after = deepcopy((()=>{
-          const {focus, unfocus} = focusData.value
-          let mixZIndex = unfocus.reduce((prev,block)=> {
-              return Math.min(prev,block.zIndex) - 1
-          },Infinity)
-          if(mixZIndex < 0) {
-            const dur  =  Math.abs(mixZIndex)
-            unfocus.forEach(block =>  block.zIndex += dur )
-            mixZIndex = 0
-          }
-          focus.forEach(block =>  block.zIndex = mixZIndex)
-          return deepcopy(dataModel.value.blocks)
-        })());
-        return {
-          // 首先执行redo
-          redo: () => {
-            methods.updateBlocks(deepcopy(after))
-          },
-          undo: () => {
-            methods.updateBlocks(deepcopy(before))
-          }
-        };
-      },
-    });
-
-    commander.registry({
-      name: 'updateBlock',
-      execute: (newBlock: VisualEditorBlockData, oldBlock: VisualEditorBlockData) => {
-        let blocks =  deepcopy(dataModel.value.blocks || [])
-        let data  ={
-          before: deepcopy(dataModel.value.blocks),
-          after: (()=> {
-            const index  =  blocks.indexOf(oldBlock)
-            if(index  >  -1){
-              blocks.splice(index,  1, newBlock)
-            }
-            return deepcopy(blocks)
-          })()
-        } 
-        return  {
-          redo: () => {
-            methods.updateBlocks(deepcopy(data.after))
-          },
-          undo: () => {
-            methods.updateBlocks(deepcopy(data.before))
-          }
+          return deepcopy(blocks)
+        })()
+      } 
+      return  {
+        redo: () => {
+          methods.updateBlocks(deepcopy(data.after))
+        },
+        undo: () => {
+          methods.updateBlocks(deepcopy(data.before))
         }
       }
-    })
+    }
+  })
 
   commander.init();
   return {
