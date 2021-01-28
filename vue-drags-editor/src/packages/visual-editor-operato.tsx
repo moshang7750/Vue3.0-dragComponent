@@ -56,7 +56,10 @@ export const VisualEditorOperato = defineComponent({
                             <ElOption label={opt.label} value={opt.val} />
                         ))
                     }
-                </ElSelect >)
+                </ElSelect >),
+                [VisualEditorPropsType.table]: () => (
+                    <div>11</div>
+                )
             }[propConfig.type]
         }
 

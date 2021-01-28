@@ -2,6 +2,7 @@ export enum VisualEditorPropsType {
     input = 'input',
     color = 'color',
     select = 'select',
+    table = 'table'
 
 }
 export type VisualEditorProps = {
@@ -9,6 +10,8 @@ export type VisualEditorProps = {
     label: string,
 } & {
     options?: VisualEditorSelectOption
+} & {
+    table?: VisualEditorTableOption
 }
 // Input
 export function createEditorInputProp(label: string): VisualEditorProps {
@@ -37,4 +40,20 @@ export function createEditorSelectProp(label: string, options: VisualEditorSelec
         label,
         options
     }
+}
+
+
+// table
+export type VisualEditorTableOption = {
+    label: string,      //列显示文本 
+    field: string,      //列绑定的的字段 
+}[]
+
+export function createEditorTableProp(label: string, table: VisualEditorTableOption): VisualEditorProps {
+    return {
+        type: VisualEditorPropsType.table,
+        label,
+        table
+    }
+
 }
