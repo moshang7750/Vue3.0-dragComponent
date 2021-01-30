@@ -3,7 +3,7 @@ import { VisualEditorBlockData, VisualEditorConfig, VisualEditorModelValue } fro
 import { ElButton, ElColorPicker, ElForm, ElFormItem, ElInput, ElInputNumber, ElOption, ElSelect } from 'element-plus'
 import { VisualEditorProps, VisualEditorPropsType } from "./visual-editor.props";
 import deepcopy from "deepcopy";
-import { TablePropEditor } from "./compontents/table-prop-editor";
+import { TablePropEditor } from "./compontents/table-prop-editor/table-prop-editor";
 
 export const VisualEditorOperato = defineComponent({
     props: {

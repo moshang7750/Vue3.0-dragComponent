@@ -44,11 +44,12 @@ export const VisualEditorBlock = defineComponent({
       //  传递参数到左侧自定义组件中
       const Render = component.render({
         props: props.block.props || {},
-        model: Object.entries(props.block.model || {}).reduce((_prev, [propName, modelName]) => {
+        model: Object.keys(component.model || {}).reduce((_prev, propName) => {
+          const modelName = props.block.model ? props.block.model[propName] : null
           _prev[propName] = {
-            [propName == 'default' ? 'modelValue' : propName]: formData[modelName],
+            [propName == 'default' ? 'modelValue' : propName]: !!modelName ? formData[modelName] : null,
             [propName == 'default' ? 'onUpdate:modelValue' : 'onChange']: (val: any) => {
-              formData[modelName] = val
+              !!modelName && (formData[modelName] = val)
             }
           }
           return _prev

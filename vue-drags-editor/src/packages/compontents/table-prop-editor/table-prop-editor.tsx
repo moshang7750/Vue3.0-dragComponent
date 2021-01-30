@@ -1,7 +1,7 @@
 import { ElButton, ElTag } from "element-plus";
 import { defineComponent, PropType } from "vue";
-import { useModel } from "../utils/useModel";
-import { VisualEditorProps } from "../visual-editor.props";
+import { useModel } from "../../utils/useModel";
+import { VisualEditorProps } from "../../visual-editor.props";
 import { $$tablePropEditor } from "./table-prop-edit-service";
 
 export const TablePropEditor = defineComponent({

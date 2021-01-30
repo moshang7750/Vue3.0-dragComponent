@@ -57,7 +57,7 @@ export const VisualEditor = defineComponent({
     const selectIndex = ref(-1)
     const state = reactive(({
       selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value]),
-      preview: true, // 当前是否正在预览
+      preview: false, // 当前是否正在预览
       editing: true  // 当前是否已经开启了编辑器
     }))
 

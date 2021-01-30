@@ -38,7 +38,8 @@ $primary: #409EFF;
         width: $menuSize;
         background: white;
         z-index: 10;
-
+        overflow-y: auto;
+        padding-bottom: 300px;
         &>.visual-editor-metu-item {
             position: relative;
             display: flex;

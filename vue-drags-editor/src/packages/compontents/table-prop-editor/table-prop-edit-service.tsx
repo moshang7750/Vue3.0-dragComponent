@@ -1,8 +1,8 @@
 import deepcopy from "deepcopy";
 import { ElButton, ElDialog, ElInput, ElTable, ElTableColumn } from "element-plus";
 import { createApp, defineComponent, getCurrentInstance, onMounted, PropType, reactive } from "vue";
-import { defer } from "../utils/defer";
-import { VisualEditorProps } from "../visual-editor.props";
+import { defer } from "../../utils/defer";
+import { VisualEditorProps } from "../../visual-editor.props";
 
 export interface TablePropEditorServiceOption {
     data: any[],
