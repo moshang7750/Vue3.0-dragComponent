@@ -80,7 +80,7 @@ visualConFig.registry('input', {
 
 visualConFig.registry('number-range', {
   label: '数字范围输入框',
-  preview: () => <NumberRange style={{ width: '100%' }} />,
+  preview: () => <NumberRange />,
   render: ({ model }) => {
     return <NumberRange {...{
       start: model.start.value,
