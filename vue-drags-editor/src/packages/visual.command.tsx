@@ -67,7 +67,7 @@ export function useVisualCommand(
         after: null as null | VisualEditorBlockData[]
       };
       const handler = {
-        dragstart: () => this.data.before = deepcopy(dataModel.value.blocks || []),
+        dragstart: () => this.data.before = deepcopy(dataModel.value.blocks),
         dragend: () => commander.state.commands.drag()
       };
       dragstart.on(handler.dragstart);
@@ -79,7 +79,7 @@ export function useVisualCommand(
     },
     execute() {
       let before = this.data.before
-      let after = deepcopy(dataModel.value.blocks || []);
+      let after = deepcopy(dataModel.value.blocks);
       return {
         // 首先执行redo
         redo: () => {

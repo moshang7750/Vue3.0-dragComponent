@@ -1,4 +1,4 @@
-import { VisualEditorBlockData, VisualEditorComponent } from "@/packages/visual-editor.utils";
+import { VisualDragProvider, VisualEditorBlockData, VisualEditorComponent } from "@/packages/visual-editor.utils";
 import { defineComponent, PropType } from "vue";
 import './block-resize.scss'
 
@@ -13,7 +13,8 @@ export const BlockResize = defineComponent({
         block: { type: Object as PropType<VisualEditorBlockData>, required: true },
         component: { type: Object as PropType<VisualEditorComponent>, required: true },
     },
-    setup(props, ctx) {
+    setup(props) {
+        const { dragstart, dragend } = VisualDragProvider.inject()
         const onMousedown = (() => {
             let data = {
                 startX: 0,
@@ -25,7 +26,8 @@ export const BlockResize = defineComponent({
                 direction: {
                     horizontal: Direction.start,
                     vertical: Direction.start
-                }
+                },
+                dragging: false
             }
             const mousedown = (e: MouseEvent, direction: {
                 horizontal: Direction,
@@ -42,11 +44,16 @@ export const BlockResize = defineComponent({
                     startLeft: props.block.left,
                     startTop: props.block.top,
                     direction,
+                    dragging: false
 
                 }
             }
             const mousemove = (e: MouseEvent) => {
-                let { startX, startY, startWidth, startHeigt, direction, startLeft, startTop } = data
+                let { startX, startY, startWidth, startHeigt, direction, startLeft, startTop, dragging } = data
+                if (!dragging) {
+                    data.dragging = true
+                    dragstart.emit()
+                }
                 let { clientX: moveX, clientY: moveY } = e
                 if (direction.horizontal == Direction.center) {
                     moveX = startX
@@ -78,6 +85,9 @@ export const BlockResize = defineComponent({
             const mouseup = (e: MouseEvent) => {
                 document.body.removeEventListener('mousemove', mousemove)
                 document.body.removeEventListener('mouseup', mouseup)
+                if (data.dragging) {
+                    dragend.emit()
+                }
             }
             return mousedown
         })()

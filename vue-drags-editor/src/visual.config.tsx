@@ -24,7 +24,10 @@ visualConFig.registry('button', {
   preview: () => <ElButton>按钮</ElButton>,
   render: ({ props, size, custom }) => <ElButton
     {...custom}
-    style={{ width: `${size.width}px`, height: `${size.height}px` }}
+    style={{
+      width: !!size.width ? `${size.width}px` : null,
+      height: !!size.height ? `${size.height}px` : null
+    }}
     type={props.type} size={props.size}
   >{props.text || '按钮'}</ElButton>,
   props: {
@@ -80,7 +83,9 @@ visualConFig.registry('input', {
   render: ({ model, size, custom }) => {
     console.log()
     return <ElInput   {...custom} {...model.default}
-      style={{ width: `${size.width}px` }}
+      style={{
+        width: !!size.width ? `${size.width}px` : null,
+      }}
     />
   },
   resize: {
@@ -123,7 +128,11 @@ visualConFig.registry('image', {
   },
   render: ({ props, size }) => {
     return (
-      <div style={{ height: `${size.height || 100}px`, width: `${size.width || 100}px` }} class="visual-block-image">
+      <div style={{
+        height:
+          `${size.height || 100}px`,
+        width: `${size.width || 100}px`
+      }} class="visual-block-image">
         <img src={props.url || 'https://cn.vuejs.org/images/logo.png'} />
       </div>
     )

@@ -1,4 +1,4 @@
-import { defineComponent, PropType, computed, ref, reactive } from 'vue';
+import { defineComponent, PropType, computed, ref, reactive, provide, inject } from 'vue';
 import './visual-editor.scss';
 import { createEvent } from './plugins/event';
 import {
@@ -7,7 +7,8 @@ import {
   VisualEditorComponent,
   createNewBlock,
   VisualEditorBlockData,
-  VisualEditorMarkLine
+  VisualEditorMarkLine,
+  VisualDragProvider
 } from './visual-editor.utils';
 import { useModel } from './utils/useModel';
 import { VisualEditorBlock } from './visual-editor-block';
@@ -16,6 +17,9 @@ import { $$dialog } from './utils/dialog-service';
 import { ElMessageBox } from 'element-plus'
 import { $$dropdown, DropdownOption } from './utils/dropdown.service';
 import { VisualEditorOperato } from './visual-editor-operato';
+
+
+
 export const VisualEditor = defineComponent({
   props: {
     modelValue: {
@@ -71,6 +75,7 @@ export const VisualEditor = defineComponent({
     // 事件观察者
     const dragstart = createEvent();
     const dragend = createEvent();
+    VisualDragProvider.provide({ dragstart, dragend })
     // 菜单组件拖拽到容器事件
     const mutuDraggier = (() => {
       let current = null as null | VisualEditorComponent;
