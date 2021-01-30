@@ -199,12 +199,24 @@ export function useVisualCommand(
       }
       return {
         redo: () => {
-
           dataModel.value = data.after
         },
         undo: () => {
           dataModel.value = data.before
         }
+      }
+    }
+  })
+  //  全选命令
+  commander.registry({
+    name: 'selectAll',
+    keyboard: 'ctrl+a',
+    execute: () => {
+      return {
+        redo: () => {
+          (dataModel.value.blocks || []).forEach(block => block.focus = true)
+        }
+
       }
     }
   })
@@ -218,7 +230,8 @@ export function useVisualCommand(
     placeTop: () => commander.state.commands.placeTop(),
     placeBottom: () => commander.state.commands.placeBottom(),
     updateBlock: (newBlock: VisualEditorBlockData, oldBlock: VisualEditorBlockData) => commander.state.commands.updateBlock(newBlock, oldBlock),
-    updateModelValue: (value: VisualEditorModelValue) => commander.state.commands.updateModelValue(value)
+    updateModelValue: (value: VisualEditorModelValue) => commander.state.commands.updateModelValue(value),
+    selectAll: () => commander.state.commands.selectAll()
   };
 
 }
