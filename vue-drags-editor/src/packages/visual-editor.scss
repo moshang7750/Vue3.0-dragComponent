@@ -199,7 +199,7 @@ $primary: #409EFF;
             }
         }
     }
-    &.visual-editor-editing{
+    &.visual-editor-not-preview{
         .visual-editor-container{
             border: dashed 1px $primary;
             box-sizing: border-box;

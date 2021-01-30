@@ -57,16 +57,15 @@ export const VisualEditor = defineComponent({
     const selectIndex = ref(-1)
     const state = reactive(({
       selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value]),
-      editing: true
+      preview: true, // 当前是否正在预览
     }))
 
     const classes = computed(() => [
       'visual-editor',
       {
-        'visual-editor-editing': state.editing
+        'visual-editor-not-preview': !state.preview
       }
     ]);
-
     // 事件观察者
     const dragstart = createEvent();
     const dragend = createEvent();
@@ -281,7 +280,7 @@ export const VisualEditor = defineComponent({
       return {
         container: {
           onMousedown: (e: MouseEvent) => {
-            if (!state.editing) return
+            if (state.preview) return
             e.preventDefault(); // 阻止事件默认行为
             if (e.currentTarget !== e.target) return
             if (!e.shiftKey) {
@@ -292,7 +291,7 @@ export const VisualEditor = defineComponent({
         },
         block: {
           onMousedown: (e: MouseEvent, block: VisualEditorBlockData, index: number) => {
-            if (!state.editing) return
+            if (state.preview) return
             // e.stopPropagation(); // 阻止冒泡
             // e.preventDefault(); // 阻止事件默认行为
             if (e.shiftKey) {
@@ -318,7 +317,7 @@ export const VisualEditor = defineComponent({
     // 右键菜单处理函数
     const handler = {
       onContextmetuBlock: (e: MouseEvent, block: VisualEditorBlockData) => {
-        if (!state.editing) return
+        if (state.preview) return
         e.stopPropagation()
         e.preventDefault()
         $$dropdown({
@@ -358,11 +357,11 @@ export const VisualEditor = defineComponent({
         tip: 'ctrl+y, ctrl+shift+z'
       },
       {
-        label: () => !state.editing ? '编辑' : '预览',
-        icon: () => !state.editing ? 'icon-edit' : 'icon-browse',
+        label: () => state.preview ? '编辑' : '预览',
+        icon: () => state.preview ? 'icon-edit' : 'icon-browse',
         handler: () => {
-          if (!state.editing) { methods.clearFocus() }
-          state.editing = !state.editing
+          if (!state.preview) { methods.clearFocus() }
+          state.preview = !state.preview
         },
       },
       {
@@ -387,7 +386,22 @@ export const VisualEditor = defineComponent({
       { label: '置底', icon: 'icon-place-bottom', handler: () => commander.placeBottom(), tip: 'ctrl+down' },
       { label: '清空', icon: 'icon-reset', handler: () => commander.clear() },
     ];
-    return () => (
+    return () => <>
+      <div
+        class="visual-editor-container"
+        style={containerStyles.value}
+      >
+        {!!dataModel.value &&
+          dataModel.value.blocks?.map((block, index) => (
+            <VisualEditorBlock
+              config={props.config}
+              block={block}
+              key={index}
+              formData={props.formData}
+            />
+          ))}
+      </div>
+
       <div class={classes.value}>
         <div class="visual-editor-metu">
           {props.config.componentList.map(comp => (
@@ -464,6 +478,6 @@ export const VisualEditor = defineComponent({
           </div>
         </div>
       </div>
-    );
+    </>
   }
 });
