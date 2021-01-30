@@ -46,7 +46,7 @@ export default defineComponent({
         },
       },
       jsonData: {
-        container: { width: 800, height: 500 },
+        container: { width: 1000, height: 800 },
         blocks: [
           {
             top: 51,
@@ -125,13 +125,30 @@ export default defineComponent({
             left: 461.5,
             componentKey: 'select',
             adjustPosition: false,
-            focus: true,
+            focus: false,
             zIndex: 0,
             width: 193,
             height: 40,
             hasResize: false,
             props: { options: [{ label: '草莓', value: 'caomei' }] },
             model: { default: 'accType' },
+            slotName: '',
+          },
+          {
+            top: 313,
+            left: 107,
+            componentKey: 'image',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 100,
+            height: 100,
+            hasResize: false,
+            props: {
+              url:
+                'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+            },
+            model: {},
             slotName: '',
           },
         ],
