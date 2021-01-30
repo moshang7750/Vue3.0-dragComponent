@@ -24,6 +24,7 @@ export const VisualEditor = defineComponent({
     },
     config: { type: Object as PropType<VisualEditorConfig>, required: true },
     formData: { type: Object as PropType<Record<string, any>>, required: true },
+    customProps: { type: Object as PropType<Record<string, any>> },
   },
   emits: {
     'update:modelValue': (val?: VisualEditorModelValue) => true
@@ -405,6 +406,8 @@ export const VisualEditor = defineComponent({
               block={block}
               key={index}
               formData={props.formData}
+              slots={ctx.slots}
+              customProps={props.customProps}
             />
           ))}
         <div class="vue-visual-container-edit-button" onClick={methods.openEdit}>
@@ -470,6 +473,8 @@ export const VisualEditor = defineComponent({
                     block={block}
                     key={index}
                     formData={props.formData}
+                    slots={ctx.slots}
+                    customProps={props.customProps}
                     {...{
                       onMousedown: (e: MouseEvent) =>
                         focusHandler.block.onMousedown(e, block, index),
