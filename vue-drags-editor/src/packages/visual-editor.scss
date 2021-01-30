@@ -167,36 +167,7 @@ $primary: #409EFF;
             height: 100%;
             overflow-y: auto;
 
-            &>.visual-editor-container {
-                position: relative;
-                background: white;
-                flex-shrink: 0;
-                flex-grow: 0;
-
-                &>.visual-editor-block {
-                    position: absolute;
-                    &.visual-editor-block-focus {
-                        &:after {
-                            border: 1px dashed $primary;
-                        }
-                    }
-                   
-
-                   
-                }
-                .visual-editor-mark-line-y{
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    border-top: dashed 1px $primary;
-                }
-                .visual-editor-mark-line-x{
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    border-left: dashed 1px $primary;
-                }
-            }
+            
         }
     }
     &.visual-editor-not-preview{
@@ -218,3 +189,62 @@ $primary: #409EFF;
         }
     }
 }
+.visual-editor-container {
+    position: relative;
+    background: white;
+    flex-shrink: 0;
+    flex-grow: 0;
+
+    &>.visual-editor-block {
+        position: absolute;
+        &.visual-editor-block-focus {
+            &:after {
+                border: 1px dashed $primary;
+            }
+        }
+       
+
+       
+    }
+    .visual-editor-mark-line-y{
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-top: dashed 1px $primary;
+    }
+    .visual-editor-mark-line-x{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        border-left: dashed 1px $primary;
+    }
+}
+
+.vue-visual-container-edit-button {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    color: $itc;
+    padding: 6px 16px;
+    border: dashed 1px $ibc;
+    user-select: none;
+
+    &:hover {
+      background-color: $ibl;
+      cursor: pointer;
+      border-style: solid;
+    }
+
+    &:active {
+      background-color: $ibc;
+    }
+
+    & > i {
+      font-size: 16px;
+      margin-right: 4px;
+    }
+
+    & > span {
+      font-size: 14px;
+    }
+  }

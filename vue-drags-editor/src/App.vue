@@ -1,15 +1,21 @@
 <template>
-  <VisualEditor
-    v-model="jsonData"
-    :config="visualConFig"
-    :formData="formData"
-  />
+  <div class="app">
+    <VisualEditor
+      v-model="jsonData"
+      :config="visualConFig"
+      :formData="formData"
+    />
+    <div style="text-align: center">
+      {{ JSON.stringify(formData) }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { VisualEditor } from './packages/visual-editor'
 import { visualConFig } from './visual.config'
+
 export default defineComponent({
   name: 'App',
   components: { VisualEditor },
@@ -90,5 +96,8 @@ export default defineComponent({
 html,
 body {
   margin: 0;
+}
+.app {
+  padding-bottom: 100px;
 }
 </style>

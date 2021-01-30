@@ -58,6 +58,7 @@ export const VisualEditor = defineComponent({
     const state = reactive(({
       selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value]),
       preview: true, // 当前是否正在预览
+      editing: true  // 当前是否已经开启了编辑器
     }))
 
     const classes = computed(() => [
@@ -128,7 +129,7 @@ export const VisualEditor = defineComponent({
     })();
     // 事件
     const methods = {
-
+      openEdit: () => state.editing = true,
       clearFocus: (block?: VisualEditorBlockData) => {
         let blocks = dataModel.value.blocks || [];
         if (blocks.length == 0) return;
@@ -385,6 +386,12 @@ export const VisualEditor = defineComponent({
       { label: '置顶', icon: 'icon-place-top', handler: () => commander.placeTop(), tip: 'ctrl+up' },
       { label: '置底', icon: 'icon-place-bottom', handler: () => commander.placeBottom(), tip: 'ctrl+down' },
       { label: '清空', icon: 'icon-reset', handler: () => commander.clear() },
+      {
+        label: '关闭', icon: 'icon-close', handler: () => {
+          methods.clearFocus()
+          state.editing = false
+        },
+      },
     ];
     return () => <>
       <div
@@ -400,9 +407,13 @@ export const VisualEditor = defineComponent({
               formData={props.formData}
             />
           ))}
+        <div class="vue-visual-container-edit-button" onClick={methods.openEdit}>
+          <i class="iconfont icon-edit" />
+          <span>编辑组件</span>
+        </div>
       </div>
 
-      <div class={classes.value}>
+      <div class={classes.value} v-show={state.editing}>
         <div class="visual-editor-metu">
           {props.config.componentList.map(comp => (
             <div
