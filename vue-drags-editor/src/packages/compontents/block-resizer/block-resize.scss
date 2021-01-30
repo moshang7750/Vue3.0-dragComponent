@@ -1,0 +1,66 @@
+$headSize: 60px;
+$menuSize: 275px;
+$operatorSize: 275px;
+
+$ibc: #dcdfe6; // border color
+$ibl: #ebeef5;
+$itc: #314659;
+$icc: rgba(0, 0, 0, 0.45);
+$boxShadowColor: #f0f1f2;
+$primary: #409EFF;
+$sapce:6px;
+$size: 6px;
+.block-resize{
+    position: absolute;
+    top:-$sapce;
+    left:-$sapce;
+    bottom:-$sapce;
+    right:-$sapce;
+    width: $sapce;
+    height: $sapce;
+    background-color: $primary;
+    &.block-resize-top{
+        left: calc(50% - #{$size / 2});
+        right: initial;
+        bottom: initial;
+    }
+
+    &.block-resize-bottom{
+        left: calc(50% - #{$size / 2});
+        right: initial;
+        top: initial;
+        
+    }
+    &.block-resize-left{
+        top: calc(50% - #{$size / 2});
+        bottom: initial;
+        right: initial;
+    }
+    &.block-resize-right{
+        top: calc(50% - #{$size / 2});
+        bottom: initial;
+        left: initial;
+        
+    }
+    &.block-resize-top-left{
+        right: initial;
+        bottom: initial;
+        
+    }
+    &.block-resize-top-right{
+        left: initial;
+        bottom: initial;
+        
+    } 
+    &.block-resize-bottom-left{
+        top: initial;
+        right: initial;
+        
+    }
+    &.block-resize-bottom-right{
+        top: initial;
+        left: initial;
+        
+    }
+
+}

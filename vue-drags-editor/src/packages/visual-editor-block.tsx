@@ -1,4 +1,5 @@
 import { defineComponent, PropType, computed, onMounted, ref } from 'vue';
+import { BlockResize } from './compontents/block-resizer/block-resize';
 import {
   VisualEditorBlockData,
 
@@ -43,6 +44,10 @@ export const VisualEditorBlock = defineComponent({
       const formData = props.formData as Record<string, any>
       //  传递参数到左侧自定义组件中
       const Render = component.render({
+        size: props.block.hasResize ? {
+          width: props.block.width,
+          height: props.block.height
+        } : {},
         props: props.block.props || {},
         model: Object.keys(component.model || {}).reduce((_prev, propName) => {
           const modelName = props.block.model ? props.block.model[propName] : null
@@ -55,9 +60,12 @@ export const VisualEditorBlock = defineComponent({
           return _prev
         }, {} as Record<string, any>)
       });
+      const { width, height } = component.resize || {}
       return (
         <div class={classes.value} style={styles.value} ref={el}>
           {Render}
+
+          {!!props.block.focus && (!!width || !!height) && <BlockResize block={props.block} component={component} />}
         </div>
       );
     };
