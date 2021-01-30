@@ -54,9 +54,7 @@ const ServiceComponent = defineComponent({
             reset: () => {
                 state.editData = deepcopy(state.option.data)
             },
-            delete: (row: any) => {
-                console.log(row, 'row')
-            }
+
         }
         const handler = {
             onConfirm: () => {
@@ -65,6 +63,9 @@ const ServiceComponent = defineComponent({
             },
             onCencel: () => {
                 methods.hide()
+            },
+            onDelete: (index: number) => {
+                state.editData.splice(index, 1)
             }
         }
 
@@ -93,8 +94,8 @@ const ServiceComponent = defineComponent({
                                 ))}
                                 <ElTableColumn  {...{ label: '操作拦' } as any}>
                                     {{
-                                        default: ({ row }: { row: any }) => (
-                                            <ElButton type="danger"  {...{ onClick: methods.delete(row) }}>删除</ElButton>
+                                        default: ({ $index }: { $index: number }) => (
+                                            <ElButton type="danger"  {...{ onClick: handler.onDelete($index) }}>删除</ElButton>
                                         )
                                     }}
                                 </ElTableColumn>

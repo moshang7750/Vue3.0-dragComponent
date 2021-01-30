@@ -25,7 +25,7 @@ export const TablePropEditor = defineComponent({
             <div>
                 {(!model.value || model.value.length == 0) && <ElButton {...{ onClick } as any}>添加</ElButton>}
                 {(model.value || []).map(item => (
-                    <ElTag>
+                    <ElTag  {...{ onClick } as any}>
                         {item[props.propConfig.table!.showKey]}
                     </ElTag>
                 ))}

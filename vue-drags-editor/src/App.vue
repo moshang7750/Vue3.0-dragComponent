@@ -30,6 +30,7 @@ export default defineComponent({
       visualConFig,
       formData: {
         usename: 'admin',
+        type1: '222',
       },
       customProps: {
         subBtn: {
