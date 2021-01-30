@@ -10,7 +10,8 @@ export interface VisualEditorBlockData {
     width: number,                      // 组件宽度         
     height: number,                     // 组件高度 
     hasResize: boolean,                 // 是否调整过宽度或者高度
-    props: Record<string, any>          //  组件设计属性 
+    props: Record<string, any>,         //  组件设计属性 
+    model: Record<string, string>,      // 绑定的字段
 }
 export interface VisualEditorModelValue {
     container: {
@@ -24,8 +25,9 @@ export interface VisualEditorComponent {
     key: string,
     label: string,
     preview: () => JSX.Element,
-    render: (data: { props: any }) => JSX.Element,
+    render: (data: { props: any, model: any }) => JSX.Element,
     props?: Record<string, VisualEditorProps>
+    model?: Record<string, string>
 }
 
 export interface VisualEditorMarkLine {
@@ -52,7 +54,8 @@ export function createNewBlock({
         width: 0,
         height: 0,
         hasResize: false,
-        props: {}
+        props: {},
+        model: {}
     }
 }
 
@@ -63,12 +66,21 @@ export function createVisualEditorConfig() {
     return {
         componentList,
         componentMap,
-        registry: <Props extends Record<string, VisualEditorProps> = {}>(key: string, component: {
-            label: string,
-            preview: () => JSX.Element,
-            render: (data: { props: { [k in keyof Props]: any } }) => JSX.Element,
-            props?: Props
-        }) => {
+        registry: <_,
+            Props extends Record<string, VisualEditorProps> = {},
+            Model extends Record<string, string> = {},
+            >(key: string, component: {
+                label: string,
+                preview: () => JSX.Element,
+                render: (data: {
+                    props: { [k in keyof Props]: any },
+                    model: {
+                        [k in keyof Model]: any
+                    }
+                }) => JSX.Element,
+                props?: Props,
+                model?: Model
+            }) => {
             let comp = { ...component, key }
             componentList.push(comp)
             componentMap[key] = comp

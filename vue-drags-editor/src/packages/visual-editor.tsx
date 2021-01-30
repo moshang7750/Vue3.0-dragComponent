@@ -22,7 +22,8 @@ export const VisualEditor = defineComponent({
       type: Object as PropType<VisualEditorModelValue>,
       required: true
     },
-    config: { type: Object as PropType<VisualEditorConfig>, required: true }
+    config: { type: Object as PropType<VisualEditorConfig>, required: true },
+    formData: { type: Object as PropType<Record<string, any>>, required: true },
   },
   emits: {
     'update:modelValue': (val?: VisualEditorModelValue) => true
@@ -56,7 +57,7 @@ export const VisualEditor = defineComponent({
     const selectIndex = ref(-1)
     const state = reactive(({
       selectBlock: computed(() => (dataModel.value.blocks || [])[selectIndex.value]),
-      editing: false
+      editing: true
     }))
 
     const classes = computed(() => [
@@ -357,8 +358,8 @@ export const VisualEditor = defineComponent({
         tip: 'ctrl+y, ctrl+shift+z'
       },
       {
-        label: () => state.editing ? '编辑' : '预览',
-        icon: () => state.editing ? 'icon-edit' : 'icon-browse',
+        label: () => !state.editing ? '编辑' : '预览',
+        icon: () => !state.editing ? 'icon-edit' : 'icon-browse',
         handler: () => {
           if (!state.editing) { methods.clearFocus() }
           state.editing = !state.editing
@@ -443,6 +444,7 @@ export const VisualEditor = defineComponent({
                     config={props.config}
                     block={block}
                     key={index}
+                    formData={props.formData}
                     {...{
                       onMousedown: (e: MouseEvent) =>
                         focusHandler.block.onMousedown(e, block, index),

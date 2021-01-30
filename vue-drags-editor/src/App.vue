@@ -1,5 +1,9 @@
 <template>
-  <VisualEditor v-model="jsonData" :config="visualConFig" />
+  <VisualEditor
+    v-model="jsonData"
+    :config="visualConFig"
+    :formData="formData"
+  />
 </template>
 
 <script lang="ts">
@@ -12,13 +16,15 @@ export default defineComponent({
   data() {
     return {
       visualConFig,
-
+      formData: {
+        usename: 'admin',
+      },
       jsonData: {
         container: { width: 800, height: 500 },
         blocks: [
           {
-            top: 77,
-            left: 172,
+            top: 51,
+            left: 74,
             componentKey: 'text',
             adjustPosition: false,
             focus: false,
@@ -26,43 +32,25 @@ export default defineComponent({
             width: 64,
             height: 22,
             hasResize: false,
+            props: {},
+            model: {},
           },
           {
-            top: 197,
-            left: 248,
+            top: 135,
+            left: 74,
             componentKey: 'button',
             adjustPosition: false,
             focus: false,
             zIndex: 0,
-            width: 98,
+            width: 70,
             height: 40,
             hasResize: false,
+            props: {},
+            model: {},
           },
           {
-            top: 338,
-            left: 262,
-            componentKey: 'input',
-            adjustPosition: false,
-            focus: false,
-            zIndex: 0,
-            width: 178,
-            height: 40,
-            hasResize: false,
-          },
-          {
-            top: 101,
-            left: 491,
-            componentKey: 'button',
-            adjustPosition: false,
-            focus: false,
-            zIndex: 0,
-            width: 98,
-            height: 40,
-            hasResize: false,
-          },
-          {
-            top: 197,
-            left: 407.5,
+            top: 164,
+            left: 300.5,
             componentKey: 'select',
             adjustPosition: false,
             focus: true,
@@ -70,7 +58,26 @@ export default defineComponent({
             width: 193,
             height: 40,
             hasResize: false,
-            props: { options: [{ label: '1111', value: '2222' }] },
+            props: {
+              options: [
+                { label: '1111', value: '2222' },
+                { label: '333', value: '444' },
+              ],
+            },
+            model: {},
+          },
+          {
+            top: 109,
+            left: 607,
+            componentKey: 'input',
+            adjustPosition: false,
+            focus: false,
+            zIndex: 0,
+            width: 178,
+            height: 40,
+            hasResize: false,
+            props: {},
+            model: {},
           },
         ],
       },

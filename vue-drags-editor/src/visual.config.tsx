@@ -44,7 +44,7 @@ visualConFig.registry('button', {
 visualConFig.registry('select', {
   label: '下拉框',
   preview: () => <ElSelect />,
-  render: ({ props }) => <ElSelect >
+  render: ({ props }) => <ElSelect key={(props.options || []).map((opt: any) => opt.value).join(',')}>
     {(props.options || []).map((opt: { label: string, value: string }, index: number) => (
       <ElOption label={opt.label} value={opt.value} key={index} />
     ))}
@@ -62,6 +62,11 @@ visualConFig.registry('select', {
 
 visualConFig.registry('input', {
   label: '输入框',
-  preview: () => <ElInput />,
-  render: () => <ElInput />
+  preview: () => <ElInput modelValue={''} />,
+  render: ({ model }) => {
+    return <ElInput {...model.default} />
+  },
+  model: {
+    default: '绑定字段'
+  }
 });
