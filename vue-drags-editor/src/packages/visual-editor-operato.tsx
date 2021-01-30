@@ -95,8 +95,6 @@ export const VisualEditorOperato = defineComponent({
                                 </ElFormItem>
                             ))}
                         </>)
-
-
                     }
                 }
 
