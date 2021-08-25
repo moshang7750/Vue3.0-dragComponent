@@ -1,11 +1,6 @@
 # 可视化拖拽组件
 
 
-## 训练营说明
-
-- 内容视频介绍：[https://www.bilibili.com/video/BV1BK4y1W7Eu/](https://www.bilibili.com/video/BV1BK4y1W7Eu/)
-- Vue版本项目预览：[http://martsforever-pot.gitee.io/vue-visual-editor/](http://martsforever-pot.gitee.io/vue-visual-editor/)
-- React版本项目预览：[http://martsforever-pot.gitee.io/react-visual-editor/](http://martsforever-pot.gitee.io/react-visual-editor/)
 
 ## 训练目标
 
